@@ -8,12 +8,15 @@ import io.netty.handler.codec.Delimiters;
 import io.netty.handler.codec.string.StringDecoder;
 import io.netty.handler.codec.string.StringEncoder;
 import io.netty.handler.ssl.SslContext;
+import pw.sponges.botclient.Bot;
 
 public class ClientInitializer extends ChannelInitializer<SocketChannel> {
 
+    private final Bot bot;
     private final SslContext context;
 
-    public ClientInitializer(SslContext context) {
+    public ClientInitializer(Bot bot, SslContext context) {
+        this.bot = bot;
         this.context = context;
     }
 

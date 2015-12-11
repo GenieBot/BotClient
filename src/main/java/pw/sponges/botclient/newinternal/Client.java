@@ -6,7 +6,7 @@ public interface Client {
     
     void start() throws SSLException, InterruptedException;
 
-    void stop();
+    void stop() throws InterruptedException;
 
     void write(String message);
 

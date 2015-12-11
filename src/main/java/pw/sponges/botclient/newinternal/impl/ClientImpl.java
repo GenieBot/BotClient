@@ -9,7 +9,6 @@ import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.util.InsecureTrustManagerFactory;
 import pw.sponges.botclient.Bot;
-import pw.sponges.botclient.messages.ConnectMessage;
 import pw.sponges.botclient.newinternal.Client;
 
 import javax.net.ssl.SSLException;
@@ -18,6 +17,8 @@ public class ClientImpl implements Client {
 
     public static final String HOST = "127.0.0.1";
     public static final int PORT = 9090;
+
+    public static boolean accepting = true;
 
     private final Bot bot;
 
@@ -41,13 +42,12 @@ public class ClientImpl implements Client {
             bootstrap = new Bootstrap();
             bootstrap.group(group)
                     .channel(NioSocketChannel.class)
-                    .handler(new ClientInitializer(context));
+                    .handler(new ClientInitializer(bot, context));
 
             future = bootstrap.connect(HOST, PORT).sync();
             channel = future.channel();
 
-            // Sending the connect message
-            write(new ConnectMessage(bot).toString());
+            while (accepting);
 
             // Wait until all messages are flushed before closing the channel
             if (lastFuture != null) {
@@ -60,12 +60,19 @@ public class ClientImpl implements Client {
     }
 
     @Override
-    public void stop() {
-
+    public void stop() throws InterruptedException {
+        try {
+            if (lastFuture != null) {
+                lastFuture.sync();
+            }
+        } finally {
+            group.shutdownGracefully();
+        }
     }
 
     @Override
     public void write(String message) {
-        lastFuture = channel.writeAndFlush(message + "\n");
+        lastFuture = channel.writeAndFlush(message + "\r\n");
+        System.out.println("Writing " + message);
     }
 }

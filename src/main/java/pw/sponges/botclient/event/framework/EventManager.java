@@ -7,30 +7,45 @@ import java.util.List;
 
 public class EventManager {
 
-    private List<Listener> listeners;
+    private final List<BotListener> botListeners;
+    private InternalListener internalListener = null;
 
     public EventManager() {
-        this.listeners = new ArrayList<>();
+        this.botListeners = new ArrayList<>();
     }
 
-    public void registerListener(Listener listener) {
-        this.listeners.add(listener);
+    public void registerBotListener(BotListener listener) {
+        this.botListeners.add(listener);
+    }
+
+    public void registerInternalListener(InternalListener internalListener) {
+        this.internalListener = internalListener;
     }
 
     public void handle(Event event) {
+        // bot events
         if (event instanceof ConnectEvent) {
-            for (Listener l : listeners) l.onConnect((ConnectEvent) event);
-        } else if (event instanceof InputEvent) {
-            for (Listener l : listeners) l.onInput((InputEvent) event);
+            for (BotListener l : botListeners) {
+                l.onConnect((ConnectEvent) event);
+            }
         } else if (event instanceof CommandEvent) {
-            for (Listener l : listeners) l.onCommand((CommandEvent) event);
+            for (BotListener l : botListeners) {
+                l.onCommand((CommandEvent) event);
+            }
         } else if (event instanceof BridgedChatEvent) {
-            for (Listener l : listeners) l.onBridgedChat((BridgedChatEvent) event);
-        } else if (event instanceof PrefixChangeEvent) {
-            for (Listener l : listeners) l.onPrefixChange((PrefixChangeEvent) event);
+            for (BotListener l : botListeners) {
+                l.onBridgedChat((BridgedChatEvent) event);
+            }
         } else if (event instanceof JoinRoomEvent) {
-            for (Listener l : listeners) l.onJoinRoomRequest((JoinRoomEvent) event);
+            for (BotListener l : botListeners) {
+                l.onJoinRoomRequest((JoinRoomEvent) event);
+            }
         }
+
+        // internal events
+        else if (event instanceof InputEvent) internalListener.onInput((InputEvent) event);
+        else if (event instanceof SettingUpdateEvent) internalListener.onSettingUpdate((SettingUpdateEvent) event);
+
     }
 
 }
