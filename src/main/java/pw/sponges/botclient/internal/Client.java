@@ -1,4 +1,4 @@
-package pw.sponges.botclient.newinternal;
+package pw.sponges.botclient.internal;
 
 import javax.net.ssl.SSLException;
 

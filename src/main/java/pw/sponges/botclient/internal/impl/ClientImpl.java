@@ -1,4 +1,4 @@
-package pw.sponges.botclient.newinternal.impl;
+package pw.sponges.botclient.internal.impl;
 
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
@@ -9,7 +9,8 @@ import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.util.InsecureTrustManagerFactory;
 import pw.sponges.botclient.Bot;
-import pw.sponges.botclient.newinternal.Client;
+import pw.sponges.botclient.internal.Client;
+import pw.sponges.botclient.util.Msg;
 
 import javax.net.ssl.SSLException;
 
@@ -61,18 +62,27 @@ public class ClientImpl implements Client {
 
     @Override
     public void stop() throws InterruptedException {
+        Msg.debug("Stop called");
+        accepting = false;
+
         try {
             if (lastFuture != null) {
+                Msg.debug("Syncing future");
                 lastFuture.sync();
+                Msg.debug("Synced future");
             }
         } finally {
+            Msg.debug("Shutting down");
             group.shutdownGracefully();
+            Msg.debug("shut down");
         }
+
+        System.exit(500);
     }
 
     @Override
     public void write(String message) {
         lastFuture = channel.writeAndFlush(message + "\r\n");
-        System.out.println("Writing " + message);
+        Msg.debug(message);
     }
 }

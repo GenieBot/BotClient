@@ -12,8 +12,7 @@ public class ConnectMessage extends Message {
 
     @Override
     public JSONObject toJson() {
-        return JSONBuilder.create(getBot())
-                .setType(this.getType())
+        return JSONBuilder.create(this)
                 .build();
     }
 }

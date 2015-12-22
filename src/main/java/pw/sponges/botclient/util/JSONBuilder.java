@@ -1,31 +1,27 @@
 package pw.sponges.botclient.util;
 
 import org.json.JSONObject;
-import pw.sponges.botclient.Bot;
+import pw.sponges.botclient.messages.Message;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class JSONBuilder {
 
-    public static Builder create(Bot bot) {
-        return new Builder(bot);
+    public static Builder create(Message message) {
+        return new Builder(message);
     }
 
     public static class Builder {
 
-        private String clientId;
+        private final String clientId;
+        private final String type;
 
-        private String type = null;
         private Map<String, Object> values = new HashMap<>();
 
-        public Builder(Bot bot) {
-            this.clientId = bot.getClientId();
-        }
-
-        public Builder setType(String type) {
-            this.type = type;
-            return this;
+        public Builder(Message message) {
+            this.clientId = message.getBot().getClientId();
+            this.type = message.getType();
         }
 
         public Builder withValue(String key, String value) {

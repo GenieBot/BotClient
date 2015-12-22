@@ -12,4 +12,8 @@ public interface BotListener {
 
     void onJoinRoomRequest(JoinRoomEvent event);
 
+    void onKickRequest(KickRequestEvent event);
+
+    void onSendRawRequest(SendRawRequestEvent event);
+
 }

@@ -4,7 +4,7 @@ import org.json.JSONObject;
 import pw.sponges.botclient.event.*;
 import pw.sponges.botclient.event.framework.EventManager;
 import pw.sponges.botclient.event.framework.InternalListener;
-import pw.sponges.botclient.newinternal.Client;
+import pw.sponges.botclient.internal.Client;
 import pw.sponges.botclient.util.Msg;
 
 public class Listener implements InternalListener {
@@ -17,7 +17,6 @@ public class Listener implements InternalListener {
         this.client = client;
         this.bot = bot;
         this.eventManager = bot.getEventManager();
-
     }
 
     @Override
@@ -38,12 +37,13 @@ public class Listener implements InternalListener {
                 eventManager.handle(new CommandEvent(object.getString("client-id"),
                         object.getString("room"),
                         object.getString("user"),
+                        object.getString("username"),
                         object.getString("response")));
                 break;
             }
 
             case "CHAT": {
-                eventManager.handle(new BridgedChatEvent(object.getString("client-id"), object.getString("source-room"), object.getString("name"), object.getString("room"), object.getString("user"), object.getString("message")));
+                eventManager.handle(new BridgedChatEvent(object.getString("client-id"), object.getString("source-room"), object.getString("name"), object.getString("room"), object.getString("userid"), object.getString("username"), object.getString("message")));
                 break;
             }
 
@@ -64,6 +64,16 @@ public class Listener implements InternalListener {
 
             case "SETTING": {
                 eventManager.handle(new SettingUpdateEvent(object.getString("room"), object.getString("setting"), object.get("value")));
+                break;
+            }
+
+            case "KICK": {
+                eventManager.handle(new KickRequestEvent(object.getString("room"), object.getString("user")));
+                break;
+            }
+
+            case "RAW": {
+                eventManager.handle(new SendRawRequestEvent(object.getString("room"), object.getString("message")));
                 break;
             }
 

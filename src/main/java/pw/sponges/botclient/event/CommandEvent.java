@@ -4,12 +4,13 @@ import pw.sponges.botclient.event.framework.Event;
 
 public class CommandEvent extends Event {
 
-    private final String client, room, user, response;
+    private final String client, room, user, username, response;
 
-    public CommandEvent(String client, String room, String user, String response) {
+    public CommandEvent(String client, String room, String user, String username, String response) {
         this.client = client;
         this.room = room;
         this.user = user;
+        this.username = username;
         this.response = response;
     }
 
@@ -25,8 +26,11 @@ public class CommandEvent extends Event {
         return user;
     }
 
+    public String getUsername() {
+        return username;
+    }
+
     public String getResponse() {
         return response;
     }
-
 }

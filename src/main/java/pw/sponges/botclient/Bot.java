@@ -2,8 +2,8 @@ package pw.sponges.botclient;
 
 import pw.sponges.botclient.event.framework.EventManager;
 import pw.sponges.botclient.messages.Message;
-import pw.sponges.botclient.newinternal.Client;
-import pw.sponges.botclient.newinternal.impl.ClientImpl;
+import pw.sponges.botclient.internal.Client;
+import pw.sponges.botclient.internal.impl.ClientImpl;
 import pw.sponges.botclient.util.Msg;
 
 import java.io.IOException;
@@ -26,13 +26,13 @@ public class Bot {
     public Bot(String clientId) {
         this.clientId = clientId;
         this.settings = new HashMap<>();
+        this.client = new ClientImpl(this);
         this.eventManager = new EventManager();
         this.eventManager.registerInternalListener(new Listener(this, client));
     }
 
     public void start() {
         new Thread(() -> {
-            client = new ClientImpl(this);
             try {
                 client.start();
             } catch (IOException e) {
@@ -40,6 +40,7 @@ public class Bot {
                     Msg.warning("Connection to server refused. Is the server down?");
                     try {
                         client.stop();
+                        System.exit(-1);
                     } catch (InterruptedException e1) {
                         e1.printStackTrace();
                     }

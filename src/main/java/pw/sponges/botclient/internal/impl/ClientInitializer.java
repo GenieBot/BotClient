@@ -1,4 +1,4 @@
-package pw.sponges.botclient.newinternal.impl;
+package pw.sponges.botclient.internal.impl;
 
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;

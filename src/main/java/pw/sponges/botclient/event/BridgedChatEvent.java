@@ -4,14 +4,15 @@ import pw.sponges.botclient.event.framework.Event;
 
 public class BridgedChatEvent extends Event {
 
-    private final String client, sourceRoom, sourceName, room, user, message;
+    private final String client, sourceRoom, sourceName, room, userId, username, message;
 
-    public BridgedChatEvent(String client, String sourceRoom, String sourceName, String room, String user, String message) {
+    public BridgedChatEvent(String client, String sourceRoom, String sourceName, String room, String userId, String username, String message) {
         this.client = client;
         this.sourceRoom = sourceRoom;
         this.sourceName = sourceName;
         this.room = room;
-        this.user = user;
+        this.userId = userId;
+        this.username = username;
         this.message = message;
     }
 
@@ -31,8 +32,12 @@ public class BridgedChatEvent extends Event {
         return room;
     }
 
-    public String getUser() {
-        return user;
+    public String getUserId() {
+        return userId;
+    }
+
+    public String getUsername() {
+        return username;
     }
 
     public String getMessage() {

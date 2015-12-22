@@ -40,12 +40,19 @@ public class EventManager {
             for (BotListener l : botListeners) {
                 l.onJoinRoomRequest((JoinRoomEvent) event);
             }
+        } else if (event instanceof KickRequestEvent) {
+            for (BotListener l : botListeners) {
+                l.onKickRequest((KickRequestEvent) event);
+            }
+        } else if (event instanceof SendRawRequestEvent) {
+            for (BotListener l : botListeners) {
+                l.onSendRawRequest((SendRawRequestEvent) event);
+            }
         }
 
         // internal events
         else if (event instanceof InputEvent) internalListener.onInput((InputEvent) event);
         else if (event instanceof SettingUpdateEvent) internalListener.onSettingUpdate((SettingUpdateEvent) event);
-
     }
 
 }
