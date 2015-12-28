@@ -52,7 +52,6 @@ public class EventManager {
 
         // internal events
         else if (event instanceof InputEvent) internalListener.onInput((InputEvent) event);
-        else if (event instanceof SettingUpdateEvent) internalListener.onSettingUpdate((SettingUpdateEvent) event);
     }
 
 }

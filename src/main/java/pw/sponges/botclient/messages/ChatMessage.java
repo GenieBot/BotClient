@@ -7,15 +7,17 @@ import pw.sponges.botclient.util.JSONBuilder;
 
 public class ChatMessage extends Message {
 
-    private final String userId, username, room, roomName, message;
+    private final String userId, username, userDisplayName, roomId, roomTopic, networkId, message;
     private final UserRole role;
 
-    public ChatMessage(Bot bot, String userId, String username, String room, String roomName, String message, UserRole role) {
+    public ChatMessage(Bot bot, String userId, String username, String userDisplayName, String roomId, String roomTopic, String networkId, String message, UserRole role) {
         super(bot, "CHAT");
         this.userId = userId;
         this.username = username;
-        this.room = room;
-        this.roomName = roomName;
+        this.userDisplayName = userDisplayName;
+        this.roomId = roomId;
+        this.roomTopic = roomTopic;
+        this.networkId = networkId;
         this.message = message;
         this.role = role;
     }
@@ -23,12 +25,23 @@ public class ChatMessage extends Message {
     @Override
     public JSONObject toJson() {
         return JSONBuilder.create(this)
-                .withValue("userid", userId)
-                .withValue("username", username)
-                .withValue("room", room)
-                .withValue("name", roomName)
+                .withNewObject("user")
+                    .withValue("id", userId)
+                    .withValue("username", username)
+                    .withValue("display-name", userDisplayName)
+                    .withValue("role", role.toString())
+                    .build()
+
+                .withNewObject("network")
+                    .withValue("id", networkId)
+                    .build()
+
+                .withNewObject("room")
+                    .withValue("id", roomId)
+                    .withValue("topic", roomTopic)
+                    .build()
+
                 .withValue("message", message)
-                .withValue("role", role.toString())
                 .build();
     }
 }

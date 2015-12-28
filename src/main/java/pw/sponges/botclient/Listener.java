@@ -62,11 +62,6 @@ public class Listener implements InternalListener {
                 break;
             }
 
-            case "SETTING": {
-                eventManager.handle(new SettingUpdateEvent(object.getString("room"), object.getString("setting"), object.get("value")));
-                break;
-            }
-
             case "KICK": {
                 eventManager.handle(new KickRequestEvent(object.getString("room"), object.getString("user")));
                 break;
@@ -83,13 +78,6 @@ public class Listener implements InternalListener {
                 break;
             }
         }
-    }
-
-    @Override
-    public void onSettingUpdate(SettingUpdateEvent event) {
-        Msg.debug("Setting update! " + event.getSetting() + ": " + event.getValue().toString());
-        // TODO call bot events
-        bot.getSettings().put(event.getSetting(), event.getValue());
     }
 
 }

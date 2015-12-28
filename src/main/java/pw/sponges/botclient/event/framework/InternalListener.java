@@ -6,6 +6,4 @@ public interface InternalListener {
 
     void onInput(InputEvent event);
 
-    void onSettingUpdate(SettingUpdateEvent event);
-
 }
