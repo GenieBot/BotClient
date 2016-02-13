@@ -6,13 +6,18 @@ import org.json.JSONObject;
 
 public class ConnectMessage extends Message {
 
-    public ConnectMessage(Bot bot) {
-        super(bot, "CONNECT");
+    private final String localChannel;
+
+    public ConnectMessage(Bot bot, String channel, String localChannel) {
+        super(bot, channel, "CONNECT");
+
+        this.localChannel = localChannel;
     }
 
     @Override
     public JSONObject toJson() {
         return JSONBuilder.create(this)
+                .withValue("channel", localChannel)
                 .build();
     }
 }

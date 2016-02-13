@@ -10,8 +10,8 @@ public class UserJoinMessage extends Message {
     private final String userId, username, userDisplayName, networkId, roomTopic, roomId;
     private final UserRole role;
 
-    public UserJoinMessage(Bot bot, String userId, String username, String userDisplayName, String networkId, String roomTopic, String roomId, UserRole role) {
-        super(bot, "JOIN");
+    public UserJoinMessage(Bot bot, String channel, String userId, String username, String userDisplayName, String networkId, String roomTopic, String roomId, UserRole role) {
+        super(bot, channel, "JOIN");
 
         this.userId = userId;
         this.username = username;

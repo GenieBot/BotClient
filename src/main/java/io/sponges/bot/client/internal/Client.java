@@ -1,13 +1,15 @@
 package io.sponges.bot.client.internal;
 
-import javax.net.ssl.SSLException;
+import io.sponges.bot.client.messages.Message;
 
 public interface Client {
     
-    void start() throws SSLException, InterruptedException;
+    void start();
 
-    void stop() throws InterruptedException;
+    void stop();
 
-    void write(String message);
+    void publish(Message message);
+
+    void publish(String channel, String message);
 
 }

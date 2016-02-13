@@ -10,8 +10,8 @@ public class ChatMessage extends Message {
     private final String userId, username, userDisplayName, roomId, roomTopic, networkId, message;
     private final UserRole role;
 
-    public ChatMessage(Bot bot, String userId, String username, String userDisplayName, String roomId, String roomTopic, String networkId, String message, UserRole role) {
-        super(bot, "CHAT");
+    public ChatMessage(Bot bot, String channel, String userId, String username, String userDisplayName, String roomId, String roomTopic, String networkId, String message, UserRole role) {
+        super(bot, channel, "CHAT");
 
         this.userId = userId;
         this.username = username;

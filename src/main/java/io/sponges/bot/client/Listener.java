@@ -16,11 +16,9 @@ public class Listener {
         this.client = client;
         this.bot = bot;
         this.eventBus = bot.getEventBus();
-
-        this.eventBus.register(InputEvent.class, this::onInput);
     }
 
-    private void onInput(InputEvent event) {
+    public void onInput(InputEvent event) {
         if (!event.getInput().contains("{")) {
             Msg.warning("Got non json: " + event.getInput());
             return;
@@ -45,12 +43,8 @@ public class Listener {
 
             case "STOP": {
                 Msg.warning("STOPPING!");
-                try {
-                    client.stop();
-                    System.exit(500);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+                client.stop();
+                System.exit(500);
                 break;
             }
 

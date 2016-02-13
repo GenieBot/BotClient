@@ -6,10 +6,12 @@ import io.sponges.bot.client.Bot;
 public abstract class Message {
 
     private final Bot bot;
+    private final String channel;
     private final String type;
 
-    public Message(Bot bot, String type) {
+    public Message(Bot bot, String channel, String type) {
         this.bot = bot;
+        this.channel = channel;
         this.type = type;
     }
 
@@ -17,6 +19,10 @@ public abstract class Message {
 
     public Bot getBot() {
         return bot;
+    }
+
+    public String getChannel() {
+        return channel;
     }
 
     public String getType() {

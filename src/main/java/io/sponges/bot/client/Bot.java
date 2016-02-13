@@ -1,12 +1,11 @@
 package io.sponges.bot.client;
 
+import io.sponges.bot.client.event.InputEvent;
 import io.sponges.bot.client.event.framework.EventBus;
 import io.sponges.bot.client.internal.Client;
-import io.sponges.bot.client.internal.impl.ClientImpl;
+import io.sponges.bot.client.internal.ClientImpl;
 import io.sponges.bot.client.messages.Message;
-import io.sponges.bot.client.util.Msg;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -17,47 +16,48 @@ import java.util.Map;
  */
 public class Bot {
 
-    private Client client;
-    private final EventBus eventBus;
+    private final Map<String, Object> settings = new HashMap<>();
 
     private final String clientId;
-    private Map<String, Object> settings;
+    private final String[] channels;
+    private final EventBus eventBus;
 
-    public Bot(String clientId) {
+    private Client client;
+
+    public Bot(String clientId, String[] channels, String host) {
         this.clientId = clientId;
-        this.settings = new HashMap<>();
-        this.client = new ClientImpl(this);
+        this.channels = channels;
         this.eventBus = new EventBus();
+        this.client = new ClientImpl(this, channels, host);
+
+        Listener listener = new Listener(this, client);
+        this.eventBus.register(InputEvent.class, listener::onInput);
+    }
+
+    public Bot(String clientId, String[] channels, String host, int port) {
+        this.clientId = clientId;
+        this.channels = channels;
+        this.eventBus = new EventBus();
+        this.client = new ClientImpl(this, channels, host, port);
+
+        Listener listener = new Listener(this, client);
+        this.eventBus.register(InputEvent.class, listener::onInput);
     }
 
     public void start() {
-        new Thread(() -> {
-            try {
-                client.start();
-            } catch (IOException e) {
-                if (e.getMessage().equalsIgnoreCase("Connection refused: connect")) {
-                    Msg.warning("Connection to server refused. Is the server down?");
-                    try {
-                        client.stop();
-                        System.exit(-1);
-                    } catch (InterruptedException e1) {
-                        e1.printStackTrace();
-                    }
-                } else {
-                    e.printStackTrace();
-                }
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }).start();
+        new Thread(client::start).start();
     }
 
-    public void sendOutput(Message message) {
-        client.write(message.toString());
+    public void publish(Message message) {
+        client.publish(message);
     }
 
     public String getClientId() {
         return clientId;
+    }
+
+    public String[] getChannels() {
+        return channels;
     }
 
     public Client getClient() {
@@ -73,11 +73,7 @@ public class Bot {
     }
 
     public void stop() {
-        try {
-            client.stop();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        client.stop();
     }
 
     public Map<String, Object> getSettings() {
