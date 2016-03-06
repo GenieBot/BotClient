@@ -4,7 +4,7 @@ import io.sponges.bot.client.event.InputEvent;
 import io.sponges.bot.client.event.framework.EventBus;
 import io.sponges.bot.client.internal.Client;
 import io.sponges.bot.client.internal.ClientImpl;
-import io.sponges.bot.client.messages.Message;
+import io.sponges.bot.client.oldmessages.Message;
 
 import java.util.HashMap;
 import java.util.Map;

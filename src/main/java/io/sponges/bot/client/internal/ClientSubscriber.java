@@ -2,7 +2,7 @@ package io.sponges.bot.client.internal;
 
 import io.sponges.bot.client.event.InputEvent;
 import io.sponges.bot.client.event.framework.EventBus;
-import io.sponges.bot.client.messages.ConnectMessage;
+import io.sponges.bot.client.oldmessages.ConnectMessage;
 import io.sponges.bot.client.util.Msg;
 import redis.clients.jedis.JedisPubSub;
 

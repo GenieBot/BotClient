@@ -1,4 +1,4 @@
-package io.sponges.bot.client.messages;
+package io.sponges.bot.client.oldmessages;
 
 import org.json.JSONObject;
 import io.sponges.bot.client.Bot;

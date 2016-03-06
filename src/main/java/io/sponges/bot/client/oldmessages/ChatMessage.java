@@ -1,24 +1,22 @@
-package io.sponges.bot.client.messages;
+package io.sponges.bot.client.oldmessages;
 
-import io.sponges.bot.client.UserRole;
-import org.json.JSONObject;
-import io.sponges.bot.client.Bot;
 import io.sponges.bot.client.util.JSONBuilder;
 
-public class UserJoinMessage extends Message {
+public class ChatMessage extends Message {
 
-    private final String userId, username, userDisplayName, networkId, roomTopic, roomId;
+    /*private final String userId, username, userDisplayName, roomId, roomTopic, networkId, message;
     private final UserRole role;
 
-    public UserJoinMessage(Bot bot, String channel, String userId, String username, String userDisplayName, String networkId, String roomTopic, String roomId, UserRole role) {
-        super(bot, channel, "JOIN");
+    public ChatMessage(Bot bot, String channel, String userId, String username, String userDisplayName, String roomId, String roomTopic, String networkId, String message, UserRole role) {
+        super(bot, channel, "CHAT");
 
         this.userId = userId;
         this.username = username;
         this.userDisplayName = userDisplayName;
-        this.networkId = networkId;
-        this.roomTopic = roomTopic;
         this.roomId = roomId;
+        this.roomTopic = roomTopic;
+        this.networkId = networkId;
+        this.message = message;
         this.role = role;
     }
 
@@ -30,7 +28,7 @@ public class UserJoinMessage extends Message {
                     .withValue("username", username)
                     .withValue("display-name", userDisplayName)
                     .withValue("role", role.toString())
-                .build()
+                    .build()
 
                 .withNewObject("network")
                     .withValue("id", networkId)
@@ -41,6 +39,7 @@ public class UserJoinMessage extends Message {
                     .withValue("topic", roomTopic)
                     .build()
 
+                .withValue("message", message)
                 .build();
-    }
+    }*/
 }

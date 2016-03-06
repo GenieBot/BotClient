@@ -67,7 +67,6 @@ public final class EventBus {
             for (Consumer<Event> consumer : consumers) {
                 consumer.accept(event);
             }
-            event.postEvent();
             return event;
         } finally {
             lock.readLock().unlock();

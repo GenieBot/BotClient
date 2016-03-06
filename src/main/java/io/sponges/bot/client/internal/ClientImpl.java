@@ -1,7 +1,7 @@
 package io.sponges.bot.client.internal;
 
 import io.sponges.bot.client.Bot;
-import io.sponges.bot.client.messages.Message;
+import io.sponges.bot.client.oldmessages.Message;
 import redis.clients.jedis.Jedis;
 
 import java.util.Optional;

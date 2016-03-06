@@ -32,7 +32,7 @@ public class Listener {
 
         switch (type) {
             case "COMMAND": {
-                eventBus.post(new CommandEvent(object.getString("client-id"), object.getString("room"), object.getString("user"), object.getString("username"), object.getString("response")));
+                eventBus.post(new CommandEvent(object.getString("client-id"), object.getString("network"), object.getString("room"), object.getString("user"), object.getString("username"), object.getString("response")));
                 break;
             }
 
@@ -59,7 +59,7 @@ public class Listener {
             }
 
             case "RAW": {
-                eventBus.post(new SendRawRequestEvent(object.getString("room"), object.getString("message")));
+                eventBus.post(new SendRawRequestEvent(object.getString("network"), object.getString("room"), object.getString("message")));
                 break;
             }
 
