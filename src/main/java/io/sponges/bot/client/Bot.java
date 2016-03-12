@@ -1,10 +1,11 @@
 package io.sponges.bot.client;
 
-import io.sponges.bot.client.event.InputEvent;
+import io.sponges.bot.client.cache.CacheManager;
+import io.sponges.bot.client.event.events.internal.ClientInputEvent;
 import io.sponges.bot.client.event.framework.EventBus;
-import io.sponges.bot.client.internal.Client;
 import io.sponges.bot.client.internal.ClientImpl;
-import io.sponges.bot.client.oldmessages.Message;
+import io.sponges.bot.client.protocol.msg.ConnectMessage;
+import io.sponges.bot.client.protocol.parser.ParserManager;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -19,53 +20,34 @@ public class Bot {
     private final Map<String, Object> settings = new HashMap<>();
 
     private final String clientId;
-    private final String[] channels;
     private final EventBus eventBus;
+    private final CacheManager cacheManager;
+    private final ParserManager parserManager;
 
-    private Client client;
+    private ClientImpl client;
 
-    public Bot(String clientId, String[] channels, String host) {
+    public Bot(String clientId, String host, int port) {
         this.clientId = clientId;
-        this.channels = channels;
         this.eventBus = new EventBus();
-        this.client = new ClientImpl(this, channels, host);
+        this.cacheManager = new CacheManager();
+        this.parserManager = new ParserManager(this);
 
-        Listener listener = new Listener(this, client);
-        this.eventBus.register(InputEvent.class, listener::onInput);
-    }
-
-    public Bot(String clientId, String[] channels, String host, int port) {
-        this.clientId = clientId;
-        this.channels = channels;
-        this.eventBus = new EventBus();
-        this.client = new ClientImpl(this, channels, host, port);
-
-        Listener listener = new Listener(this, client);
-        this.eventBus.register(InputEvent.class, listener::onInput);
+        this.client = new ClientImpl(host, port, this);
+        this.eventBus.register(ClientInputEvent.class, parserManager::onClientInput);
     }
 
     public void start() {
-        new Thread(client::start).start();
-    }
-
-    public void publish(Message message) {
-        client.publish(message);
+        client.start(() -> {
+            client.sendMessage(new ConnectMessage(this).toString());
+        });
     }
 
     public String getClientId() {
         return clientId;
     }
 
-    public String[] getChannels() {
-        return channels;
-    }
-
-    public Client getClient() {
+    public ClientImpl getClient() {
         return client;
-    }
-
-    public void setClient(Client client) {
-        this.client = client;
     }
 
     public EventBus getEventBus() {
@@ -78,5 +60,9 @@ public class Bot {
 
     public Map<String, Object> getSettings() {
         return settings;
+    }
+
+    public CacheManager getCacheManager() {
+        return cacheManager;
     }
 }

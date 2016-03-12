@@ -1,83 +1,83 @@
 package io.sponges.bot.client.internal;
 
+import io.netty.channel.ChannelHandlerContext;
 import io.sponges.bot.client.Bot;
-import io.sponges.bot.client.oldmessages.Message;
-import redis.clients.jedis.Jedis;
+import io.sponges.bot.client.event.events.internal.ClientInputEvent;
+import io.sponges.bot.client.internal.framework.Client;
+import io.sponges.bot.client.internal.framework.ClientListener;
+import io.sponges.bot.client.internal.framework.exception.ClientAlreadyRunningException;
+import io.sponges.bot.client.internal.framework.exception.ClientNotRunningException;
+import io.sponges.bot.client.util.ValidationUtils;
+import org.json.JSONObject;
 
-import java.util.Optional;
+public class ClientImpl {
 
-public class ClientImpl implements Client {
+    private final Object lock = new Object();
+    private volatile boolean running = false;
 
     private final Bot bot;
-    private final String[] channels;
+    private final Client client;
 
-    private final String host;
-    private int port = -1;
-
-    private final ClientSubscriber clientSubscriber;
-
-    private Jedis jedisSubscriber;
-    private Jedis jedisPublisher;
-
-    public ClientImpl(Bot bot, String[] channels, String host) {
+    public ClientImpl(String host, int port, Bot bot) {
         this.bot = bot;
-        this.channels = channels;
-        this.host = host;
+        this.client = new io.sponges.bot.client.internal.framework.impl.ClientImpl(host, port);
+        this.client.registerListener(new ClientListener() {
+            @Override
+            public void onConnect(ChannelHandlerContext context) {
+                System.out.println("Connected!");
+            }
 
-        this.clientSubscriber = new ClientSubscriber(this);
-        setupJedis(host, Optional.<Integer>empty());
+            @Override
+            public void onDisconnect(ChannelHandlerContext context) {
+                System.out.println("Disconnected!");
+                context.channel().close();
+                context.channel().parent().close();
+            }
+
+            @Override
+            public void onMessage(ChannelHandlerContext context, String message) {
+                if (!ValidationUtils.isValidJson(message)) {
+                    System.out.println("Got invalid json " + message + "!");
+                    return;
+                }
+
+                bot.getEventBus().post(new ClientInputEvent(new JSONObject(message)));
+            }
+
+            @Override
+            public void onError(ChannelHandlerContext context, Throwable cause) {
+
+            }
+        });
     }
 
-    public ClientImpl(Bot bot, String[] channels, String host, int port) {
-        this.bot = bot;
-        this.channels = channels;
-        this.host = host;
-        this.port = port;
-
-        this.clientSubscriber = new ClientSubscriber(this);
-        setupJedis(host, Optional.of(port));
-    }
-
-    private void setupJedis(String host, Optional<Integer> port) {
-        if (port.isPresent()) {
-            this.jedisSubscriber = new Jedis(host, port.get());
-            this.jedisPublisher = new Jedis(host, port.get());
-        } else {
-            this.jedisSubscriber = new Jedis(host);
-            this.jedisPublisher = new Jedis(host);
+    public void start(Runnable runnable) {
+        synchronized (lock) {
+            try {
+                client.start(runnable);
+            } catch (ClientAlreadyRunningException | InterruptedException e) {
+                e.printStackTrace();
+            }
+            running = true;
         }
     }
 
-    @Override
-    public void start() {
-        new Thread(() -> {
-            jedisSubscriber.subscribe(clientSubscriber, channels);
-        }).start();
-    }
-
-    @Override
     public void stop() {
-        jedisSubscriber.close();
-        jedisPublisher.close();
+        synchronized (lock) {
+            try {
+                client.stop(() -> System.out.println("stopped"));
+            } catch (ClientNotRunningException e) {
+                e.printStackTrace();
+            }
+            running = false;
+        }
     }
 
-    @Override
-    public void publish(Message message) {
-        publish(message.getChannel(), message.toString());
+    public boolean isRunning() {
+        return running;
     }
 
-    @Override
-    public void publish(String channel, String message) {
-        new Thread(() -> {
-            jedisPublisher.publish(channel, message);
-        }).start();
-    }
-
-    public Bot getBot() {
-        return bot;
-    }
-
-    public String[] getChannels() {
-        return channels;
+    public void sendMessage(String message) {
+        client.sendMessage(message);
     }
 }

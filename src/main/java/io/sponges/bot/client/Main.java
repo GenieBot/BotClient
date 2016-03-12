@@ -1,25 +1,28 @@
 package io.sponges.bot.client;
 
-import io.sponges.bot.client.event.CommandEvent;
-import io.sponges.bot.client.oldmessages.ChatMessage;
+import io.sponges.bot.client.event.events.CommandResponseEvent;
+import io.sponges.bot.client.protocol.msg.ChatMessage;
 
 import java.util.Scanner;
 
 public class Main {
 
     public Main() {
-        Bot bot = new Bot("test", new String[] { "testchannel" }, "localhost");
+        Bot bot = new Bot("cli", "localhost", 9574);
 
-        bot.getEventBus().register(CommandEvent.class, (event) -> {
-            System.out.println(event.getResponse());
+        bot.getEventBus().register(CommandResponseEvent.class, (event) -> {
+            System.out.println(event.getMessage());
         });
 
         new Thread(() -> {
             Scanner scanner = new Scanner(System.in);
             String input;
             while ((input = scanner.nextLine()) != null) {
-                bot.publish(new ChatMessage(bot, "server", "test", "test", "test", "test", "test", "test", input, UserRole.OP));
+                ChatMessage chatMessage = new ChatMessage(bot, "cli", "cli", true, "cli", null, null,
+                        System.currentTimeMillis(), input);
+                bot.getClient().sendMessage(chatMessage.toString());
             }
+            scanner.close();
         }).start();
 
         bot.start();
