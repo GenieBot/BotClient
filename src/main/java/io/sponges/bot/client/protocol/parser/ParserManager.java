@@ -13,6 +13,7 @@ public class ParserManager {
 
     public ParserManager(Bot bot) {
         register(new CommandResponseParser(bot.getEventBus(), bot.getCacheManager()));
+        register(new StopParser(bot));
     }
 
     private void register(MessageParser parser) {

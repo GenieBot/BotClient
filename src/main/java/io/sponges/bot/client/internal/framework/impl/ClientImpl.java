@@ -33,36 +33,32 @@ public final class ClientImpl implements Client {
 
     @Override
     public void start(Runnable runnable) throws ClientAlreadyRunningException, InterruptedException {
-        synchronized (lock) {
-            if (running.get()) {
-                throw new ClientAlreadyRunningException();
-            }
-            running.set(true);
+        if (running.get()) {
+            throw new ClientAlreadyRunningException();
+        }
+        running.set(true);
 
-            try {
-                Bootstrap bootstrap = new Bootstrap();
-                bootstrap.group(eventLoopGroup)
-                        .channel(NioSocketChannel.class)
-                        .handler(new ClientInitializer(clientHandler));
-                bootstrap.connect(host, port).sync().channel();
-                while (running.get());
-            } finally {
-                eventLoopGroup.shutdownGracefully();
-                running.set(false);
-            }
+        try {
+            Bootstrap bootstrap = new Bootstrap();
+            bootstrap.group(eventLoopGroup)
+                    .channel(NioSocketChannel.class)
+                    .handler(new ClientInitializer(clientHandler));
+            bootstrap.connect(host, port).sync().channel();
+            while (running.get());
+        } finally {
+            eventLoopGroup.shutdownGracefully();
+            running.set(false);
         }
     }
 
     @Override
     public void stop(Runnable runnable) throws ClientNotRunningException {
-        synchronized (lock) {
-            if (!running.get()) {
-                throw new ClientNotRunningException();
-            }
-            eventLoopGroup.shutdownGracefully();
-            running.set(false);
-            runnable.run();
+        if (!running.get()) {
+            throw new ClientNotRunningException();
         }
+        running.set(false);
+        eventLoopGroup.shutdownGracefully();
+        runnable.run();
     }
 
     @Override

@@ -7,6 +7,7 @@ import io.sponges.bot.client.internal.framework.Client;
 import io.sponges.bot.client.internal.framework.ClientListener;
 import io.sponges.bot.client.internal.framework.exception.ClientAlreadyRunningException;
 import io.sponges.bot.client.internal.framework.exception.ClientNotRunningException;
+import io.sponges.bot.client.protocol.msg.ConnectMessage;
 import io.sponges.bot.client.util.ValidationUtils;
 import org.json.JSONObject;
 
@@ -24,6 +25,7 @@ public class ClientImpl {
         this.client.registerListener(new ClientListener() {
             @Override
             public void onConnect(ChannelHandlerContext context) {
+                sendMessage(new ConnectMessage(bot).toString());
                 System.out.println("Connected!");
             }
 
@@ -52,25 +54,21 @@ public class ClientImpl {
     }
 
     public void start(Runnable runnable) {
-        synchronized (lock) {
-            try {
-                client.start(runnable);
-            } catch (ClientAlreadyRunningException | InterruptedException e) {
-                e.printStackTrace();
-            }
-            running = true;
+        try {
+            client.start(runnable);
+        } catch (ClientAlreadyRunningException | InterruptedException e) {
+            e.printStackTrace();
         }
+        running = true;
     }
 
     public void stop() {
-        synchronized (lock) {
-            try {
-                client.stop(() -> System.out.println("stopped"));
-            } catch (ClientNotRunningException e) {
-                e.printStackTrace();
-            }
-            running = false;
+        try {
+            client.stop(() -> System.out.println("stopped"));
+        } catch (ClientNotRunningException e) {
+            e.printStackTrace();
         }
+        running = false;
     }
 
     public boolean isRunning() {

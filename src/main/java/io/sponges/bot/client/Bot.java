@@ -2,6 +2,7 @@ package io.sponges.bot.client;
 
 import io.sponges.bot.client.cache.CacheManager;
 import io.sponges.bot.client.event.events.internal.ClientInputEvent;
+import io.sponges.bot.client.event.events.internal.StopEvent;
 import io.sponges.bot.client.event.framework.EventBus;
 import io.sponges.bot.client.internal.ClientImpl;
 import io.sponges.bot.client.protocol.msg.ConnectMessage;
@@ -20,18 +21,21 @@ public class Bot {
     private final Map<String, Object> settings = new HashMap<>();
 
     private final String clientId;
+    private final String defaultPrefix;
+
     private final EventBus eventBus;
     private final CacheManager cacheManager;
     private final ParserManager parserManager;
 
     private ClientImpl client;
 
-    public Bot(String clientId, String host, int port) {
+    public Bot(String clientId, String defaultPrefix, String host, int port) {
         this.clientId = clientId;
+        this.defaultPrefix = defaultPrefix;
+
         this.eventBus = new EventBus();
         this.cacheManager = new CacheManager();
         this.parserManager = new ParserManager(this);
-
         this.client = new ClientImpl(host, port, this);
         this.eventBus.register(ClientInputEvent.class, parserManager::onClientInput);
     }
@@ -46,6 +50,10 @@ public class Bot {
         return clientId;
     }
 
+    public String getDefaultPrefix() {
+        return defaultPrefix;
+    }
+
     public ClientImpl getClient() {
         return client;
     }
@@ -56,6 +64,7 @@ public class Bot {
 
     public void stop() {
         client.stop();
+        eventBus.post(new StopEvent());
     }
 
     public Map<String, Object> getSettings() {
