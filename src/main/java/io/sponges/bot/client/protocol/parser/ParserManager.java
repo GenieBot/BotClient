@@ -1,7 +1,9 @@
 package io.sponges.bot.client.protocol.parser;
 
 import io.sponges.bot.client.Bot;
+import io.sponges.bot.client.cache.CacheManager;
 import io.sponges.bot.client.event.events.internal.ClientInputEvent;
+import io.sponges.bot.client.event.framework.EventBus;
 import org.json.JSONObject;
 
 import java.util.HashMap;
@@ -12,8 +14,11 @@ public class ParserManager {
     private final Map<String, MessageParser> parsers = new HashMap<>();
 
     public ParserManager(Bot bot) {
-        register(new CommandResponseParser(bot.getEventBus(), bot.getCacheManager()));
+        EventBus eventBus = bot.getEventBus();
+        CacheManager cacheManager = bot.getCacheManager();
+        register(new CommandResponseParser(eventBus, cacheManager));
         register(new StopParser(bot));
+        register(new SendRawParser(eventBus, cacheManager));
     }
 
     private void register(MessageParser parser) {

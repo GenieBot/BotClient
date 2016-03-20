@@ -2,7 +2,7 @@ package io.sponges.bot.client;
 
 import io.sponges.bot.client.cache.CacheManager;
 import io.sponges.bot.client.event.events.internal.ClientInputEvent;
-import io.sponges.bot.client.event.events.internal.StopEvent;
+import io.sponges.bot.client.event.events.StopEvent;
 import io.sponges.bot.client.event.framework.EventBus;
 import io.sponges.bot.client.internal.ClientImpl;
 import io.sponges.bot.client.protocol.msg.ConnectMessage;

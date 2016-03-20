@@ -18,7 +18,7 @@ public class Main {
             Scanner scanner = new Scanner(System.in);
             String input;
             while ((input = scanner.nextLine()) != null) {
-                ChatMessage chatMessage = new ChatMessage(bot, "cli", "cli", true, "cli", null, null,
+                ChatMessage chatMessage = new ChatMessage(bot, "cli", "cli", true, "cli", null, null, false, true,
                         System.currentTimeMillis(), input);
                 bot.getClient().sendMessage(chatMessage.toString());
 

@@ -12,10 +12,12 @@ public final class ChatMessage extends Message {
     private final String userId;
     private final String username;
     private final String displayName;
+    private final boolean admin;
+    private final boolean op;
     private final long time;
     private final String content;
 
-    public ChatMessage(Bot bot, String networkId, String channelId, boolean isPrivate, String userId, String username, String displayName, long time, String content) {
+    public ChatMessage(Bot bot, String networkId, String channelId, boolean isPrivate, String userId, String username, String displayName, boolean admin, boolean op, long time, String content) {
         super(bot, "CHAT");
         this.bot = bot;
         this.networkId = networkId;
@@ -24,6 +26,8 @@ public final class ChatMessage extends Message {
         this.userId = userId;
         this.username = username;
         this.displayName = displayName;
+        this.admin = admin;
+        this.op = op;
         this.time = time;
         this.content = content;
     }
@@ -38,6 +42,8 @@ public final class ChatMessage extends Message {
         user.put("id", userId);
         user.putOpt("username", username);
         user.putOpt("display-name", displayName);
+        user.put("admin", admin);
+        user.put("op", op);
 
         JSONObject message = new JSONObject();
         message.put("time", time);
