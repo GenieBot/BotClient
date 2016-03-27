@@ -16,9 +16,19 @@ public class ParserManager {
     public ParserManager(Bot bot) {
         EventBus eventBus = bot.getEventBus();
         CacheManager cacheManager = bot.getCacheManager();
-        register(new CommandResponseParser(eventBus, cacheManager));
-        register(new StopParser(bot));
-        register(new SendRawParser(eventBus, cacheManager));
+
+        register(
+                new CommandResponseParser(eventBus, cacheManager),
+                new StopParser(bot),
+                new SendRawParser(eventBus, cacheManager),
+                new KickUserParser(eventBus, cacheManager)
+        );
+    }
+
+    private void register(MessageParser... parsers) {
+        for (MessageParser parser : parsers) {
+            register(parser);
+        }
     }
 
     private void register(MessageParser parser) {
