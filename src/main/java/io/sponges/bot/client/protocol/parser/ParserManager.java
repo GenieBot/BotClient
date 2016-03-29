@@ -21,7 +21,8 @@ public class ParserManager {
                 new CommandResponseParser(eventBus, cacheManager),
                 new StopParser(bot),
                 new SendRawParser(eventBus, cacheManager),
-                new KickUserParser(eventBus, cacheManager)
+                new KickUserParser(eventBus, cacheManager),
+                new ChangeChannelTopicParser(eventBus, cacheManager)
         );
     }
 
