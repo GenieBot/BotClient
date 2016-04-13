@@ -26,7 +26,6 @@ public final class ClientImpl implements Client {
         this.host = host;
         this.port = port;
         this.eventLoopGroup = new NioEventLoopGroup();
-        this.eventLoopGroup.rebuildSelectors();
         this.clientHandler = new ClientHandler(this);
     }
 
