@@ -1,7 +1,6 @@
 package io.sponges.bot.client.internal.framework.impl;
 
 import io.netty.bootstrap.Bootstrap;
-import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.util.internal.ConcurrentSet;
@@ -11,52 +10,46 @@ import io.sponges.bot.client.internal.framework.exception.ClientAlreadyRunningEx
 import io.sponges.bot.client.internal.framework.exception.ClientNotRunningException;
 
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 public final class ClientImpl implements Client {
 
     private final Object lock = new Object();
-    private final AtomicBoolean running = new AtomicBoolean(false);
+    private volatile boolean running = false;
     private final Set<ClientListener> listeners = new ConcurrentSet<>();
 
     private final String host;
     private final int port;
-    private final EventLoopGroup eventLoopGroup;
+    private final NioEventLoopGroup eventLoopGroup;
     private final ClientHandler clientHandler;
 
     public ClientImpl(String host, int port) {
         this.host = host;
         this.port = port;
         this.eventLoopGroup = new NioEventLoopGroup();
+        this.eventLoopGroup.rebuildSelectors();
         this.clientHandler = new ClientHandler(this);
     }
 
     @Override
     public void start(Runnable runnable) throws ClientAlreadyRunningException, InterruptedException {
-        if (running.get()) {
+        if (running) {
             throw new ClientAlreadyRunningException();
         }
-        running.set(true);
+        running = true;
 
-        try {
-            Bootstrap bootstrap = new Bootstrap();
-            bootstrap.group(eventLoopGroup)
-                    .channel(NioSocketChannel.class)
-                    .handler(new ClientInitializer(clientHandler));
-            bootstrap.connect(host, port).sync().channel();
-            while (running.get());
-        } finally {
-            eventLoopGroup.shutdownGracefully();
-            running.set(false);
-        }
+        Bootstrap bootstrap = new Bootstrap();
+        bootstrap.group(eventLoopGroup)
+                .channel(NioSocketChannel.class)
+                .handler(new ClientInitializer(clientHandler));
+        bootstrap.connect(host, port).sync().channel();
     }
 
     @Override
     public void stop(Runnable runnable) throws ClientNotRunningException {
-        if (!running.get()) {
+        if (!running) {
             throw new ClientNotRunningException();
         }
-        running.set(false);
+        running = false;
         eventLoopGroup.shutdownGracefully();
         runnable.run();
     }
