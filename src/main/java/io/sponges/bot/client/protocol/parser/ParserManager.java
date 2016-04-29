@@ -22,7 +22,8 @@ public class ParserManager {
                 new StopParser(bot),
                 new SendRawParser(eventBus, cacheManager),
                 new KickUserParser(eventBus, cacheManager),
-                new ChangeChannelTopicParser(eventBus, cacheManager)
+                new ChangeChannelTopicParser(eventBus, cacheManager),
+                new ChannelMessageParser(bot)
         );
     }
 
