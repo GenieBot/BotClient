@@ -7,9 +7,13 @@ import io.sponges.bot.client.internal.framework.Client;
 import io.sponges.bot.client.internal.framework.ClientListener;
 import io.sponges.bot.client.internal.framework.exception.ClientAlreadyRunningException;
 import io.sponges.bot.client.internal.framework.exception.ClientNotRunningException;
+import io.sponges.bot.client.protocol.msg.ChannelMessage;
 import io.sponges.bot.client.protocol.msg.ConnectMessage;
 import io.sponges.bot.client.util.ValidationUtils;
 import org.json.JSONObject;
+
+import java.util.UUID;
+import java.util.function.Consumer;
 
 public class ClientImpl {
 
@@ -77,5 +81,9 @@ public class ClientImpl {
 
     public void sendMessage(String message) {
         client.sendMessage(message);
+    }
+
+    public void sendChannelMessage(Bot bot, String message, Consumer<String> callback) {
+        sendMessage(new ChannelMessage(bot, UUID.randomUUID().toString(), message, callback, ChannelMessage.MessageType.REQUEST).toString());
     }
 }

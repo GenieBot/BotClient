@@ -74,4 +74,8 @@ public class Bot {
     public CacheManager getCacheManager() {
         return cacheManager;
     }
+
+    public ParserManager getParserManager() {
+        return parserManager;
+    }
 }

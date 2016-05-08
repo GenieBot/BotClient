@@ -8,10 +8,13 @@ import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Consumer;
 
 public class ParserManager {
 
     private final Map<String, MessageParser> parsers = new HashMap<>();
+    private final Map<String, Consumer<JSONObject>> callbacks = new ConcurrentHashMap<>();
 
     public ParserManager(Bot bot) {
         EventBus eventBus = bot.getEventBus();
@@ -42,11 +45,25 @@ public class ParserManager {
         String type = json.getString("type").toUpperCase();
         long time = json.getLong("time");
         JSONObject content = json.getJSONObject("content");
+        if (!json.isNull("id")) {
+            String messageId = json.getString("id");
+            if (callbacks.containsKey(messageId)) {
+                getCallback(messageId).accept(content);
+            }
+        }
         if (parsers.containsKey(type)) {
             parsers.get(type).parse(time, content);
         } else {
             System.err.println("Got invalid message type \"" + type + "\"!");
         }
+    }
+
+    public void registerCallback(String messageId, Consumer<JSONObject> callback) {
+        callbacks.put(messageId, callback);
+    }
+
+    public Consumer<JSONObject> getCallback(String messageId) {
+        return callbacks.get(messageId);
     }
 
 }

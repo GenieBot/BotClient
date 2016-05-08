@@ -21,7 +21,7 @@ public final class ClientInitializer extends ChannelInitializer<SocketChannel> {
         ChannelPipeline pipeline = socketChannel.pipeline();
 
         // text line codec
-        pipeline.addLast(new DelimiterBasedFrameDecoder(8192, Delimiters.lineDelimiter()));
+        pipeline.addLast(new DelimiterBasedFrameDecoder(16384, Delimiters.lineDelimiter()));
         pipeline.addLast(new StringDecoder()); // you can specify the charset in here
         pipeline.addLast(new StringEncoder());
 
