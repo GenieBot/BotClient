@@ -37,10 +37,6 @@ public final class ChannelTopicChangeMessage extends Message {
 
         JSONObject user = new JSONObject();
         user.put("id", userId);
-        user.putOpt("username", username);
-        user.putOpt("display-name", displayName);
-        user.put("admin", admin);
-        user.put("op", op);
 
         return new JSONObject()
                 .put("network", networkId)
