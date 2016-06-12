@@ -27,16 +27,13 @@ public class Main {
             Scanner scanner = new Scanner(System.in);
             String input;
             while ((input = scanner.nextLine()) != null) {
-                ChatMessage chatMessage = new ChatMessage(bot, "cli", "cli", false, "cli", null, null, true, true,
-                        System.currentTimeMillis(), input);
+                ChatMessage chatMessage = new ChatMessage(bot, "cli", "cli", "cli", System.currentTimeMillis(), input);
                 bot.getClient().sendChannelMessage(bot, input, response -> {
                     System.out.println("Got response from callback: " + response);
                 });
                 bot.getClient().sendMessage(chatMessage.toString());
                 if (input.equalsIgnoreCase("userjoin")) {
-                    UserJoinMessage userJoinMessage = new UserJoinMessage(bot, "cli", "cli", "addedUserId",
-                            "addedUsername", "addedDisplayName", false, false, "initiatorId", "initiatorUsername",
-                            "initiatorDisplayName", true, false);
+                    UserJoinMessage userJoinMessage = new UserJoinMessage(bot, "cli", "cli", "addedUserId", "initiatorId");
                     bot.getClient().sendMessage(userJoinMessage.toString());
                 } else if (input.equalsIgnoreCase("topicchange")) {
                     ChannelTopicChangeMessage message = new ChannelTopicChangeMessage(bot, "cli", "cli", "userId",

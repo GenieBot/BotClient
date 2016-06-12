@@ -34,7 +34,7 @@ public final class ResourceRequestParser extends MessageParser {
                 break;
             }
             default:
-                System.err.println("Invalid resource request type \"" + type + "\"!");
+                System.out.println("Invalid resource request type \"" + type + "\"!");
                 return;
         }
         eventBus.post(event);
