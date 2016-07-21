@@ -3,7 +3,6 @@ package io.sponges.bot.client;
 import io.sponges.bot.client.event.events.ChannelMessageReceiveEvent;
 import io.sponges.bot.client.event.events.CommandResponseEvent;
 import io.sponges.bot.client.event.events.StopEvent;
-import io.sponges.bot.client.protocol.msg.ChannelTopicChangeMessage;
 import io.sponges.bot.client.protocol.msg.ChatMessage;
 import io.sponges.bot.client.protocol.msg.UserJoinMessage;
 
@@ -35,10 +34,6 @@ public class Main {
                 if (input.equalsIgnoreCase("userjoin")) {
                     UserJoinMessage userJoinMessage = new UserJoinMessage(bot, "cli", "cli", "addedUserId", "initiatorId");
                     bot.getClient().sendMessage(userJoinMessage.toString());
-                } else if (input.equalsIgnoreCase("topicchange")) {
-                    ChannelTopicChangeMessage message = new ChannelTopicChangeMessage(bot, "cli", "cli", "userId",
-                            "username", "displayName", false, false, "old topic content", "new topic content");
-                    bot.getClient().sendMessage(message.toString());
                 }
             }
             scanner.close();

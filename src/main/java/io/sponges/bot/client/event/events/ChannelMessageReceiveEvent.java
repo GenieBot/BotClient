@@ -15,6 +15,7 @@ public final class ChannelMessageReceiveEvent extends Event {
     }
 
     public void reply(Bot bot, String message) {
+        System.out.println("replying to channel message id=" + id + "message=" + message + "type=" + ChannelMessage.MessageType.RESPONSE);
         bot.getClient().sendMessage(new ChannelMessage(bot, id, message, null, ChannelMessage.MessageType.RESPONSE)
                 .toString());
     }

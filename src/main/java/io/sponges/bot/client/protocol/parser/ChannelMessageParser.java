@@ -27,6 +27,7 @@ public final class ChannelMessageParser extends MessageParser {
             }
             manager.getMessages().get(id).accept(message);
         } else {
+            System.out.println("got channel message id=" + id + "message=" + message);
             bot.getEventBus().post(new ChannelMessageReceiveEvent(message, id));
         }
     }

@@ -3,17 +3,17 @@ package io.sponges.bot.client.protocol.parser;
 import io.sponges.bot.client.cache.CacheManager;
 import io.sponges.bot.client.cache.Channel;
 import io.sponges.bot.client.cache.NetworkCache;
-import io.sponges.bot.client.event.events.ChangeChannelTopicEvent;
+import io.sponges.bot.client.event.events.UpdateChannelDataEvent;
 import io.sponges.bot.client.event.framework.EventBus;
 import org.json.JSONObject;
 
-public final class ChangeChannelTopicParser extends MessageParser {
+public final class UpdateChannelDataParser extends MessageParser {
 
     private final EventBus eventBus;
     private final CacheManager cacheManager;
 
-    protected ChangeChannelTopicParser(EventBus eventBus, CacheManager cacheManager) {
-        super("CHANGE_CHANNEL_TOPIC");
+    protected UpdateChannelDataParser(EventBus eventBus, CacheManager cacheManager) {
+        super("UPDATE_CHANNEL_DATA");
         this.eventBus = eventBus;
         this.cacheManager = cacheManager;
     }
@@ -42,8 +42,9 @@ public final class ChangeChannelTopicParser extends MessageParser {
             }
         }
 
-        String topic = content.getString("topic");
-        ChangeChannelTopicEvent event = new ChangeChannelTopicEvent(network, channel, time, topic);
+        String detail = content.getString("detail");
+        String value = content.getString("value");
+        UpdateChannelDataEvent event = new UpdateChannelDataEvent(network, channel, detail, value, time);
         eventBus.post(event);
     }
 }
