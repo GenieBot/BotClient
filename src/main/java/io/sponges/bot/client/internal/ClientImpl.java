@@ -2,6 +2,7 @@ package io.sponges.bot.client.internal;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.sponges.bot.client.Bot;
+import io.sponges.bot.client.Logger;
 import io.sponges.bot.client.event.events.internal.ClientInputEvent;
 import io.sponges.bot.client.internal.framework.Client;
 import io.sponges.bot.client.internal.framework.ClientListener;
@@ -30,20 +31,20 @@ public class ClientImpl {
             @Override
             public void onConnect(ChannelHandlerContext context) {
                 sendMessage(new ConnectMessage(bot).toString());
-                System.out.println("Connected!");
             }
 
             @Override
             public void onDisconnect(ChannelHandlerContext context) {
-                System.out.println("Disconnected!");
+                Bot.getLogger().log(Logger.Type.INFO, "Disconnected!");
                 context.channel().close();
                 context.channel().parent().close();
+                System.exit(-1);
             }
 
             @Override
             public void onMessage(ChannelHandlerContext context, String message) {
                 if (!ValidationUtils.isValidJson(message)) {
-                    System.out.println("Got invalid json " + message + "!");
+                    Bot.getLogger().log(Logger.Type.WARNING, "Got invalid json " + message + "!");
                     return;
                 }
 
@@ -68,7 +69,7 @@ public class ClientImpl {
 
     public void stop() {
         try {
-            client.stop(() -> System.out.println("stopped"));
+            client.stop(() -> Bot.getLogger().log(Logger.Type.INFO, "stopped"));
         } catch (ClientNotRunningException e) {
             e.printStackTrace();
         }

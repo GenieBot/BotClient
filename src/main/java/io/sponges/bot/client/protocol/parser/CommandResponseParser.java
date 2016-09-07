@@ -1,5 +1,6 @@
 package io.sponges.bot.client.protocol.parser;
 
+import io.sponges.bot.client.Bot;
 import io.sponges.bot.client.cache.CacheManager;
 import io.sponges.bot.client.cache.Channel;
 import io.sponges.bot.client.cache.NetworkCache;
@@ -10,11 +11,13 @@ import org.json.JSONObject;
 
 public final class CommandResponseParser extends MessageParser {
 
+    private final Bot bot;
     private final EventBus eventBus;
     private final CacheManager cacheManager;
 
-    protected CommandResponseParser(EventBus eventBus, CacheManager cacheManager) {
+    protected CommandResponseParser(Bot bot, EventBus eventBus, CacheManager cacheManager) {
         super("COMMAND_RESPONSE");
+        this.bot = bot;
         this.eventBus = eventBus;
         this.cacheManager = cacheManager;
     }
@@ -62,7 +65,14 @@ public final class CommandResponseParser extends MessageParser {
         }
 
         String response = content.getString("response");
-        CommandResponseEvent event = new CommandResponseEvent(network, channel, user, time, response);
+        boolean formatted = content.getBoolean("formatted");
+        if (formatted) {
+            if (bot.getMessageFormatter() != null) {
+                response = bot.getMessageFormatter().format(new JSONObject(content));
+            }
+        }
+
+        CommandResponseEvent event = new CommandResponseEvent(network, channel, user, time, response, formatted);
         eventBus.post(event);
     }
 }

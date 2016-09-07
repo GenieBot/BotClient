@@ -1,5 +1,7 @@
 package io.sponges.bot.client.protocol.parser;
 
+import io.sponges.bot.client.Bot;
+import io.sponges.bot.client.Logger;
 import io.sponges.bot.client.event.events.ResourceRequestEvent;
 import io.sponges.bot.client.event.framework.EventBus;
 import org.json.JSONObject;
@@ -34,7 +36,7 @@ public final class ResourceRequestParser extends MessageParser {
                 break;
             }
             default:
-                System.out.println("Invalid resource request type \"" + type + "\"!");
+                Bot.getLogger().log(Logger.Type.WARNING, "Invalid resource request type \"" + type + "\"!");
                 return;
         }
         eventBus.post(event);

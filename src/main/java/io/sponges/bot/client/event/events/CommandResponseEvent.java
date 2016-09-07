@@ -11,13 +11,15 @@ public final class CommandResponseEvent extends Event {
     private final User user;
     private final float time;
     private final String message;
+    private final boolean formatted;
 
-    public CommandResponseEvent(String network, Channel channel, User user, float time, String message) {
+    public CommandResponseEvent(String network, Channel channel, User user, float time, String message, boolean formatted) {
         this.network = network;
         this.channel = channel;
         this.user = user;
         this.time = time;
         this.message = message;
+        this.formatted = formatted;
     }
 
     public String getNetwork() {
@@ -38,5 +40,9 @@ public final class CommandResponseEvent extends Event {
 
     public String getMessage() {
         return message;
+    }
+
+    public boolean isFormatted() {
+        return formatted;
     }
 }

@@ -14,7 +14,6 @@ public final class StopParser extends MessageParser {
 
     @Override
     public void parse(long time, JSONObject content) {
-        System.out.println("==================\r\n\r\n       STOP       \r\n\r\n==================");
         bot.stop();
     }
 }

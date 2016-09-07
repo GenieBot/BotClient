@@ -1,6 +1,7 @@
 package io.sponges.bot.client.protocol.parser;
 
 import io.sponges.bot.client.Bot;
+import io.sponges.bot.client.Logger;
 import io.sponges.bot.client.event.events.ChannelMessageReceiveEvent;
 import io.sponges.bot.client.protocol.manager.ChannelMessageManager;
 import io.sponges.bot.client.protocol.msg.ChannelMessage;
@@ -27,7 +28,7 @@ public final class ChannelMessageParser extends MessageParser {
             }
             manager.getMessages().get(id).accept(message);
         } else {
-            System.out.println("got channel message id=" + id + "message=" + message);
+            Bot.getLogger().log(Logger.Type.DEBUG, "got channel message id=" + id + "message=" + message);
             bot.getEventBus().post(new ChannelMessageReceiveEvent(message, id));
         }
     }

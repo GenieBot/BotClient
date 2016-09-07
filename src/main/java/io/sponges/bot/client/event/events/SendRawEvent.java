@@ -9,12 +9,14 @@ public final class SendRawEvent extends Event {
     private final Channel channel;
     private final float time;
     private final String message;
+    private final boolean formatted;
 
-    public SendRawEvent(String network, Channel channel, float time, String message) {
+    public SendRawEvent(String network, Channel channel, float time, String message, boolean formatted) {
         this.network = network;
         this.channel = channel;
         this.time = time;
         this.message = message;
+        this.formatted = formatted;
     }
 
     public String getNetwork() {
@@ -31,5 +33,9 @@ public final class SendRawEvent extends Event {
 
     public String getMessage() {
         return message;
+    }
+
+    public boolean isFormatted() {
+        return formatted;
     }
 }

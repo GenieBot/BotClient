@@ -1,5 +1,6 @@
 package io.sponges.bot.client.protocol.parser;
 
+import io.sponges.bot.client.Bot;
 import io.sponges.bot.client.cache.CacheManager;
 import io.sponges.bot.client.cache.Channel;
 import io.sponges.bot.client.cache.NetworkCache;
@@ -9,11 +10,13 @@ import org.json.JSONObject;
 
 public final class SendRawParser extends MessageParser {
 
+    private final Bot bot;
     private final EventBus eventBus;
     private final CacheManager cacheManager;
 
-    protected SendRawParser(EventBus eventBus, CacheManager cacheManager) {
+    protected SendRawParser(Bot bot, EventBus eventBus, CacheManager cacheManager) {
         super("RAW");
+        this.bot = bot;
         this.eventBus = eventBus;
         this.cacheManager = cacheManager;
     }
@@ -43,7 +46,14 @@ public final class SendRawParser extends MessageParser {
         }
 
         String response = content.getString("message");
-        SendRawEvent event = new SendRawEvent(network, channel, time, response);
+        boolean formatted = content.getBoolean("formatted");
+        if (formatted) {
+            if (bot.getMessageFormatter() != null) {
+                response = bot.getMessageFormatter().format(new JSONObject(content));
+            }
+        }
+
+        SendRawEvent event = new SendRawEvent(network, channel, time, response, formatted);
         eventBus.post(event);
     }
 }

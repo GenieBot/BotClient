@@ -21,9 +21,9 @@ public class ParserManager {
         CacheManager cacheManager = bot.getCacheManager();
 
         register(
-                new CommandResponseParser(eventBus, cacheManager),
+                new CommandResponseParser(bot, eventBus, cacheManager),
                 new StopParser(bot),
-                new SendRawParser(eventBus, cacheManager),
+                new SendRawParser(bot, eventBus, cacheManager),
                 new KickUserParser(eventBus, cacheManager),
                 new UpdateChannelDataParser(eventBus, cacheManager),
                 new ChannelMessageParser(bot),
