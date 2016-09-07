@@ -6,6 +6,8 @@ public interface Logger {
 
     void log(String type, String message);
 
+    void setDebug(boolean debug);
+
     enum Type {
         INFO, DEBUG, WARNING
     }

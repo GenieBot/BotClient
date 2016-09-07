@@ -1,14 +1,15 @@
 package io.sponges.bot.client;
 
 import io.sponges.bot.client.cache.CacheManager;
-import io.sponges.bot.client.event.events.internal.ClientInputEvent;
 import io.sponges.bot.client.event.events.StopEvent;
+import io.sponges.bot.client.event.events.internal.ClientInputEvent;
 import io.sponges.bot.client.event.framework.EventBus;
 import io.sponges.bot.client.formatting.MessageFormatter;
 import io.sponges.bot.client.internal.ClientImpl;
 import io.sponges.bot.client.protocol.msg.ConnectMessage;
 import io.sponges.bot.client.protocol.parser.ParserManager;
 
+import java.io.PrintStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -35,16 +36,30 @@ public class Bot {
 
     private static Logger logger = new Logger() {
         private final String format = "[%s - %s] %s\r\n";
-        private final SimpleDateFormat TIME_FORMAT = new SimpleDateFormat("HH:mm:ss");
+        private final SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
+
+        private boolean debug = false;
 
         @Override
         public void log(Type type, String message) {
-            log(type.name(), message);
+            if (type == Type.DEBUG && !debug) return;
+            PrintStream stream;
+            if (type == Type.WARNING) {
+                stream = System.err;
+            } else {
+                stream = System.out;
+            }
+            stream.printf(format, timeFormat.format(new Date()), type.name(), message);
         }
 
         @Override
         public void log(String type, String message) {
-            System.out.printf(format, TIME_FORMAT.format(new Date()), type, message);
+            System.out.printf(format, timeFormat.format(new Date()), type, message);
+        }
+
+        @Override
+        public void setDebug(boolean debug) {
+            this.debug = debug;
         }
     };
 

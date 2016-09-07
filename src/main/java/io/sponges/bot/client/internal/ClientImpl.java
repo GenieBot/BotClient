@@ -10,7 +10,6 @@ import io.sponges.bot.client.internal.framework.exception.ClientAlreadyRunningEx
 import io.sponges.bot.client.internal.framework.exception.ClientNotRunningException;
 import io.sponges.bot.client.protocol.msg.ChannelMessage;
 import io.sponges.bot.client.protocol.msg.ConnectMessage;
-import io.sponges.bot.client.util.ValidationUtils;
 import org.json.JSONObject;
 
 import java.util.UUID;
@@ -38,12 +37,12 @@ public class ClientImpl {
                 Bot.getLogger().log(Logger.Type.INFO, "Disconnected!");
                 context.channel().close();
                 context.channel().parent().close();
-                System.exit(-1);
+                context.close();
             }
 
             @Override
             public void onMessage(ChannelHandlerContext context, String message) {
-                if (!ValidationUtils.isValidJson(message)) {
+                if (message.charAt(0) != '{' || message.charAt(message.length() - 1) != '}') {
                     Bot.getLogger().log(Logger.Type.WARNING, "Got invalid json " + message + "!");
                     return;
                 }
@@ -69,7 +68,7 @@ public class ClientImpl {
 
     public void stop() {
         try {
-            client.stop(() -> Bot.getLogger().log(Logger.Type.INFO, "stopped"));
+            client.stop(() -> Bot.getLogger().log(Logger.Type.DEBUG, "stopped"));
         } catch (ClientNotRunningException e) {
             e.printStackTrace();
         }

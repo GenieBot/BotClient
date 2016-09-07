@@ -2,13 +2,16 @@ package io.sponges.bot.client;
 
 import io.sponges.bot.client.event.events.CommandResponseEvent;
 import io.sponges.bot.client.event.events.ResourceRequestEvent;
+import io.sponges.bot.client.event.events.StopEvent;
 import io.sponges.bot.client.event.framework.EventBus;
 import io.sponges.bot.client.protocol.msg.ChatMessage;
 
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Scanner;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 class Main {
 
@@ -19,9 +22,10 @@ class Main {
 
     private static final SimpleDateFormat TIME_FORMAT = new SimpleDateFormat("HH:mm:ss");
 
-    Main() {
+    public static void main(String[] args) {
         Logger logger = Bot.getLogger();
         logger.log(Logger.Type.INFO, "Starting...");
+        long startTime = System.currentTimeMillis();
         Bot bot = new Bot("cli", "-", "localhost", 9574);
         EventBus eventBus = bot.getEventBus();
         eventBus.register(CommandResponseEvent.class, event -> {
@@ -45,46 +49,28 @@ class Main {
             }
             event.reply(bot, parameters);
         });
-        new Thread(() -> {
-            Scanner scanner = new Scanner(System.in);
-            String input;
-            while ((input = scanner.nextLine()) != null) {
-                long time = System.currentTimeMillis();
-                ChatMessage message = new ChatMessage(bot, DUMMY_NETWORK, DUMMY_CHANNEL, DUMMY_USER, time, input);
-                bot.getClient().sendMessage(message.toString());
-            }
-            scanner.close();
-        }).start();
-        bot.start();
-
-        /*bot.getEventBus().register(CommandResponseEvent.class, event -> {
-            System.out.println(event.getMessage());
-        });
-        bot.getEventBus().register(StopEvent.class, event -> {
-            System.out.println("stop nigga");
+        AtomicBoolean running = new AtomicBoolean(true);
+        eventBus.register(StopEvent.class, event -> {
+            logger.log(Logger.Type.DEBUG, "Got stop event lol");
+            running.set(false);
             System.exit(-1);
         });
         new Thread(() -> {
             Scanner scanner = new Scanner(System.in);
             String input;
-            while ((input = scanner.nextLine()) != null) {
-                ChatMessage chatMessage = new ChatMessage(bot, "cli", "cli", "cli", System.currentTimeMillis(), input);
-                bot.getClient().sendChannelMessage(bot, input, response -> {
-                    System.out.println("Got response from callback: " + response);
-                });
-                bot.getClient().sendMessage(chatMessage.toString());
-                if (input.equalsIgnoreCase("userjoin")) {
-                    UserJoinMessage userJoinMessage = new UserJoinMessage(bot, "cli", "cli", "addedUserId", "initiatorId");
-                    bot.getClient().sendMessage(userJoinMessage.toString());
+            try {
+                while (running.get() && (input = scanner.nextLine()) != null) {
+                    long time = System.currentTimeMillis();
+                    ChatMessage message = new ChatMessage(bot, DUMMY_NETWORK, DUMMY_CHANNEL, DUMMY_USER, time, input);
+                    bot.getClient().sendMessage(message.toString());
                 }
+            } catch (NoSuchElementException ignored) {
             }
             scanner.close();
         }).start();
-        bot.start();*/
-    }
-
-    public static void main(String[] args) {
-        new Main();
+        bot.start();
+        long diff = System.currentTimeMillis() - startTime;
+        logger.log(Logger.Type.INFO, "Started! Took " + diff + "ms.");
     }
 
 }
