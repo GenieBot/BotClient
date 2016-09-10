@@ -1,6 +1,7 @@
 package io.sponges.bot.client.protocol.parser;
 
 import io.sponges.bot.client.Bot;
+import io.sponges.bot.client.Logger;
 import io.sponges.bot.client.cache.CacheManager;
 import io.sponges.bot.client.event.events.internal.ClientInputEvent;
 import io.sponges.bot.client.event.framework.EventBus;
@@ -26,7 +27,6 @@ public class ParserManager {
                 new SendRawParser(bot, eventBus, cacheManager),
                 new KickUserParser(eventBus, cacheManager),
                 new UpdateChannelDataParser(eventBus, cacheManager),
-                new ChannelMessageParser(bot),
                 new ResourceRequestParser(eventBus)
         );
     }
@@ -43,6 +43,7 @@ public class ParserManager {
 
     public void onClientInput(ClientInputEvent event) {
         JSONObject json = event.getJsonObject();
+        Bot.getLogger().log(Logger.Type.DEBUG, json.toString());
         String type = json.getString("type").toUpperCase();
         long time = json.getLong("time");
         JSONObject content = json.getJSONObject("content");

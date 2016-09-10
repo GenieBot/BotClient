@@ -14,10 +14,10 @@ public final class ResourceResponseMessage extends Message {
     private final Map<String, String> parameters;
     private final boolean found;
 
-    public ResourceResponseMessage(Bot bot, String requestId) {
+    public ResourceResponseMessage(Bot bot, String requestId, ResourceRequestEvent.ResourceType type) {
         super(bot, "RESOURCE_RESPONSE");
         this.requestId = requestId;
-        this.type = null;
+        this.type = type;
         this.networkId = null;
         this.parameters = null;
         this.found = false;
@@ -35,7 +35,7 @@ public final class ResourceResponseMessage extends Message {
     @Override
     protected JSONObject toJson() {
         JSONObject object = new JSONObject();
-        if (type != null) object.put("resource", type.name());
+        object.put("resource", type.name());
         object.put("id", requestId);
         if (networkId != null) object.put("network", networkId);
         if (parameters != null) object.put("params", parameters);

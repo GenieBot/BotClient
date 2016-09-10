@@ -24,6 +24,7 @@ class Main {
 
     public static void main(String[] args) {
         Logger logger = Bot.getLogger();
+        logger.setDebug(true);
         logger.log(Logger.Type.INFO, "Starting...");
         long startTime = System.currentTimeMillis();
         Bot bot = new Bot("cli", "-", "localhost", 9574);
@@ -35,13 +36,25 @@ class Main {
             Map<String, String> parameters = new HashMap<>();
             switch (event.getType()) {
                 case NETWORK:
+                    if (!event.getNetworkId().equals(DUMMY_NETWORK)) {
+                        event.replyInvalid(bot);
+                        return;
+                    }
                     parameters.put("name", "Dummy CLI network");
                     break;
                 case CHANNEL:
+                    if (!event.getChannelId().equals(DUMMY_CHANNEL)) {
+                        event.replyInvalid(bot);
+                        return;
+                    }
                     parameters.put("id", DUMMY_CHANNEL);
                     parameters.put("private", String.valueOf(false));
                     break;
                 case USER:
+                    if (!event.getUserId().equals(DUMMY_USER)) {
+                        event.replyInvalid(bot);
+                        return;
+                    }
                     parameters.put("id", DUMMY_USER);
                     parameters.put("admin", String.valueOf(true));
                     parameters.put("op", String.valueOf(true));

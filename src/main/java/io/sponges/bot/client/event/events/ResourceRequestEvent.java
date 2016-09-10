@@ -46,7 +46,7 @@ public final class ResourceRequestEvent extends Event {
     }
 
     public void replyInvalid(Bot bot) {
-        bot.getClient().sendMessage(new ResourceResponseMessage(bot, requestId).toString());
+        bot.getClient().sendMessage(new ResourceResponseMessage(bot, requestId, type).toString());
     }
 
     public ResourceType getType() {
